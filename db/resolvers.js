@@ -147,6 +147,20 @@ const resolvers = {
         return await client.save();
       } catch (error) {}
     },
+    updateClient: async (_, { id, input }, ctx) => {
+      try {
+        // Check client
+        let client = await Client.findById(id);
+        if (!client) throw new Error("Client not found!");
+        // Ckeck is my
+        if (client.vendor.toString() !== ctx.user.id)
+          throw new Error("Not your client.");
+        // Save product update
+        return await Client.findOneAndUpdate({ _id: id }, input, {
+          new: true,
+        });
+      } catch (error) {}
+    },
   },
 };
 
