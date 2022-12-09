@@ -111,23 +111,22 @@ const resolvers = {
       } catch (error) {}
     },
     // ========= Clients =========
-    createClient: async (_, { input }) => {
+    createClient: async (_, { input }, ctx) => {
       try {
         // Destructuring
         const { email } = input;
         // Check client
         let exits = await Client.findOne({ email });
         if (!exits) throw new Error("The client is already registered.");
-        
+
         // Create instance client
         const client = new Client(input);
         // Assign vendor
-        client.vendor = ""
+        client.vendor = ctx.user.id;
         // Save database
         return await client.save();
       } catch (error) {}
     },
-   
   },
 };
 
