@@ -18,15 +18,16 @@ const resolvers = {
   Query: {
     // ========= Users =========
     getUser: async (_, { token }) => {
-      // Verify token
-      return await jwt.verify(token, process.env.TOKEN_SECRET);
+      try {
+        // Verify token
+        return await jwt.verify(token, process.env.TOKEN_SECRET);
+      } catch (error) {}
     },
     // ========= Products =========
     getProducts: async () => {
       try {
         return await Product.find({});
       } catch (error) {
-        console.log("🚀 ~ file: resolvers.js:30 ~ getProducts: ~ error", error);
       }
     },
     getProduct: async (_, { id }) => {
@@ -35,11 +36,19 @@ const resolvers = {
         const product = await Product.findById(id);
         if (!product) throw new Error("Product not found!");
         return product;
-      } catch (error) {
-        console.log("🚀 ~ file: resolvers.js:40 ~ getProduct: ~ error", error);
-      }
+      } catch (error) {}
     },
     // ========= Clients =========
+    getClients: async () => {
+      try {
+        return await Client.find({});
+      } catch (error) {}
+    },
+    getClientsForVendor: async (_, {}, ctx) => {
+      try {
+        return await Client.find({ vendor: ctx.user.id.toString() })
+      } catch (error) {}
+    },
   },
   Mutation: {
     // ========= Users =========
