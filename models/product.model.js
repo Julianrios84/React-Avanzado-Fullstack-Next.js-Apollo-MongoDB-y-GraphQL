@@ -9,17 +9,17 @@ const productSchema = new mongoose.Schema({
   },
   stock: {
     type: Number,
-    require: true,
+    required: true,
     trim: true
   },
   price: {
     type: Number,
-    require: true,
+    required: true,
     trim: true
   },
   createAt: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   }
 });
 
