@@ -53,6 +53,14 @@ const resolvers = {
         token: createToken(user, process.env.TOKEN_SECRET, process.env.TOKEN_EXPIRESIN)
       }
     },
+    createProduct: async (_, {input}) => {
+      try {
+        const product = new Product(input)
+        return await product.save()
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:60 ~ createProduct: ~ error", error)
+      }
+    }
   },
 };
 

@@ -1,7 +1,8 @@
-const { gql } = require('apollo-server')
+const { gql } = require("apollo-server");
 
 // Schema
 const typeDefs = gql`
+  # ========= Users =========
   type User {
     id: ID
     name: String
@@ -18,22 +19,41 @@ const typeDefs = gql`
     name: String!
     lastname: String!
     email: String!
-    password: String! 
+    password: String!
   }
 
   input AuthInput {
     email: String!
-    password: String! 
+    password: String!
+  }
+
+  # ========= Products =========
+
+  type Product {
+    id: ID
+    name: String
+    stock: Int
+    price: Float
+    createAt: String
+  }
+
+  input ProductInput {
+    name: String!
+    stock: Int!
+    price: Float!
   }
 
   type Query {
-     getUser(token: String!): User
+    getUser(token: String!): User
   }
 
   type Mutation {
+    # ========= Users =========
     createUser(input: UserInput): User
     authUser(input: AuthInput): Token
+    # ========= Products =========
+    createProduct(input: ProductInput): Product
   }
-`
+`;
 
-module.exports = typeDefs
+module.exports = typeDefs;
