@@ -57,6 +57,7 @@ const typeDefs = gql`
     authUser(input: AuthInput): Token
     # ========= Products =========
     createProduct(input: ProductInput): Product
+    updateProduct(id: ID!, input: ProductInput): Product
   }
 `;
 
