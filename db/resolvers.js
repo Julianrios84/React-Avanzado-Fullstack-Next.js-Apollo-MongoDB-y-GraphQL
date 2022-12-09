@@ -27,8 +27,7 @@ const resolvers = {
     getProducts: async () => {
       try {
         return await Product.find({});
-      } catch (error) {
-      }
+      } catch (error) {}
     },
     getProduct: async (_, { id }) => {
       try {
@@ -44,9 +43,21 @@ const resolvers = {
         return await Client.find({});
       } catch (error) {}
     },
+    getClient: async (_, { id }, ctx) => {
+      try {
+        // Creck client
+        const client = await Client.findById(id);
+        if (!client) throw new Error("Client not found.");
+        // Ckeck is my
+        if (client.vendor.toString() !== ctx.user.id)
+          throw new Error("Not your client.");
+
+        return client;
+      } catch (error) {}
+    },
     getClientsForVendor: async (_, {}, ctx) => {
       try {
-        return await Client.find({ vendor: ctx.user.id.toString() })
+        return await Client.find({ vendor: ctx.user.id.toString() });
       } catch (error) {}
     },
   },
