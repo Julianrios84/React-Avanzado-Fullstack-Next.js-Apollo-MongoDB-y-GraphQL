@@ -21,6 +21,7 @@ const resolvers = {
     },
   },
   Mutation: {
+    // ========= Users =========
     createUser: async (_, { input }) => {
       // Destructuring
       const { email, password } = input;
@@ -53,12 +54,20 @@ const resolvers = {
         token: createToken(user, process.env.TOKEN_SECRET, process.env.TOKEN_EXPIRESIN)
       }
     },
+    // ========= Products =========
     createProduct: async (_, {input}) => {
       try {
         const product = new Product(input)
         return await product.save()
       } catch (error) {
         console.log("🚀 ~ file: resolvers.js:60 ~ createProduct: ~ error", error)
+      }
+    },
+    getProducts: async () => {
+      try {
+        return await Product.find({})        
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:70 ~ getProducts: ~ error", error)
       }
     }
   },
