@@ -43,6 +43,26 @@ const typeDefs = gql`
     price: Float!
   }
 
+  # ========= Clients =========
+
+  type Client {
+    id: ID
+    name: String
+    lastname: String
+    company: String
+    email: String
+    mobile: String
+    createAt: String
+  }
+
+  input ProductInput {
+    name: String!
+    lastname: String!
+    company: String!
+    email: String!
+    mobile: String
+  }
+
   type Query {
     # ========= Users =========
     getUser(token: String!): User
@@ -59,6 +79,10 @@ const typeDefs = gql`
     createProduct(input: ProductInput): Product
     updateProduct(id: ID!, input: ProductInput): Product
     deleteProduct(id: ID!): String
+    # ========= Clients =========
+    createClient(input: ClientInput): Client
+    updateClient(id: ID!, input: ClientInput): Client
+    deleteClient(id: ID!): String
   }
 `;
 

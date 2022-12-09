@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 // Models
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
+const Client = require("../models/client.model");
 
 // Functions
 const createToken = (user, secret, expiresIn) => {
@@ -38,6 +39,7 @@ const resolvers = {
         console.log("🚀 ~ file: resolvers.js:40 ~ getProduct: ~ error", error);
       }
     },
+    // ========= Clients =========
   },
   Mutation: {
     // ========= Users =========
@@ -108,6 +110,7 @@ const resolvers = {
         return "Product delete!";
       } catch (error) {}
     },
+    
   },
 };
 
