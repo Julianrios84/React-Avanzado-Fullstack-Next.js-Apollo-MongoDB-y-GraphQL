@@ -60,6 +60,7 @@ const resolvers = {
         return await Client.find({ vendor: ctx.user.id.toString() });
       } catch (error) {}
     },
+    // ========= Orders =========
   },
   Mutation: {
     // ========= Users =========
@@ -173,7 +174,8 @@ const resolvers = {
         await Client.findOneAndDelete({ _id: id });
         return "Client delete!";
       } catch (error) {}
-    }
+    },
+    // ========= Orders =========
   },
 };
 

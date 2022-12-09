@@ -63,6 +63,40 @@ const typeDefs = gql`
     mobile: String
   }
 
+  # ========= Orders =========
+  type Order {
+    id: ID
+    order: [OrderGroup]
+    total: Float
+    client: ID
+    vendor: ID
+    status: StatusOrder
+    createAt: String
+  }
+
+  type OrderGroup {
+    id: ID
+    stock: Int
+  }
+
+  type OrderInput {
+    order: [OrderProductInput]
+    total: Float!
+    client: ID!
+    status: StatusOrder
+  }
+
+  type OrderProductInput {
+    id: ID!
+    stock: Int!
+  }
+
+  enum StatusOrder {
+    PENDING
+    CANCELLED
+    COMPLETE
+  }
+
   type Query {
     # ========= Users =========
     getUser(token: String!): User
@@ -73,6 +107,7 @@ const typeDefs = gql`
     getClients: [Client]
     getClient(id: ID!): Client
     getClientsForVendor: [Client]
+    # ========= Orders =========
     
   }
 
@@ -88,6 +123,9 @@ const typeDefs = gql`
     createClient(input: ClientInput): Client
     updateClient(id: ID!, input: ClientInput): Client
     deleteClient(id: ID!): String
+    # ========= Orders =========
+    createOrder(input: OrderInput): Order
+
   }
 `;
 
