@@ -1,8 +1,10 @@
-
 // Resolver
 const resolvers = {
   Query: {
-   
+    getUsers: () => 'Users'
+  },
+  Mutation: {
+    createUser: () => 'Create user!'
   }
 }
 
