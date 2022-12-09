@@ -4,7 +4,9 @@ const resolvers = {
     getUsers: () => 'Users'
   },
   Mutation: {
-    createUser: () => 'Create user!'
+    createUser: (_, {input}) => {
+      
+    }
   }
 }
 
