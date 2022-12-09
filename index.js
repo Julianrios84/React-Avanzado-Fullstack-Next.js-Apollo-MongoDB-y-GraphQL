@@ -1,13 +1,13 @@
 const { ApolloServer, gql } = require('apollo-server')
 const typeDefs = require('./db/schema')
 const resolvers = require('./db/resolvers')
+const database = require('./config/db')
+
+// Connected Databse
+database()
 
 // Server
-const server = new ApolloServer({ typeDefs, resolvers, context: () => {
-    return {
-      myContext: 'Hello World!'
-    }
-} })
+const server = new ApolloServer({ typeDefs, resolvers })
 
 // Run server
 server.listen().then(({url}) => {
