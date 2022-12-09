@@ -99,6 +99,15 @@ const resolvers = {
         });
       } catch (error) {}
     },
+    deleteProduct: async (_, { id }) => {
+      try {
+        // Check product
+        let product = await Product.findById(id);
+        if (!product) throw new Error("Product not found!");
+        await Product.deleteOne({ _id: id });
+        return "Product delete!";
+      } catch (error) {}
+    },
   },
 };
 
