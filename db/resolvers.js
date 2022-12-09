@@ -1,8 +1,10 @@
+require('dotenv').config({ path: '.env' })
 // Packages
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken')
 // Models
 const User = require("../models/user.model");
+const Product = require("../models/product.model");
 
 // Functions
 const createToken = (user, secret, expiresIn) => {
