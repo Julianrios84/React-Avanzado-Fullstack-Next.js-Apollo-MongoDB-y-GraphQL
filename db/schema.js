@@ -22,7 +22,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createUser(input: UserInput): String
+    createUser(input: UserInput): User
   }
 `
 
