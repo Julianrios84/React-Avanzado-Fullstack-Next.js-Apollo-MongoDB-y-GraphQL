@@ -8,7 +8,7 @@ const clientSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
-  lastname: {
+  surnames: {
     type: String,
     required: true,
     trim: true,

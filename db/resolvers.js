@@ -6,11 +6,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
 const Client = require("../models/client.model");
+const Order = require("../models/order.model");
 
 // Functions
 const createToken = (user, secret, expiresIn) => {
-  const { id, email, name, lastname } = user;
-  return jwt.sign({ id, email, name, lastname }, secret, { expiresIn });
+  const { id, email, name, surnames } = user;
+  return jwt.sign({ id, email, name, surnames }, secret, { expiresIn });
 };
 
 // Resolver
@@ -45,10 +46,10 @@ const resolvers = {
     },
     getClient: async (_, { id }, ctx) => {
       try {
-        // Creck client
+        // Check if the client exists
         const client = await Client.findById(id);
         if (!client) throw new Error("Client not found.");
-        // Ckeck is my
+        // Check if the client is mine
         if (client.vendor.toString() !== ctx.user.id)
           throw new Error("Not your client.");
 
@@ -71,7 +72,7 @@ const resolvers = {
         // Check if user is unique
         const exists = await User.findOne({ email });
         if (exists) throw new Error("The user is already registered.");
-        // Hashear password
+        // Hashed password
         const salt = await bcrypt.getSalt(10);
         input.password = await bcrypt.hash(password, salt);
         // Save in database
@@ -93,12 +94,12 @@ const resolvers = {
           exists.password
         );
         if (!passwordIsCorrect) throw new Error("The password is not correct.");
-        // Crerate token
+        // Create token
         return {
           token: createToken(
             user,
             process.env.TOKEN_SECRET,
-            process.env.TOKEN_EXPIRESIN
+            process.env.TOKEN_EXPIRES
           ),
         };
       } catch (error) {}
@@ -167,7 +168,7 @@ const resolvers = {
         // Check if the client exists
         let client = await Client.findById(id);
         if (!client) throw new Error("Product not found!");
-        // Ckeck if the client is mine
+        // Check if the client is mine
         if (client.vendor.toString() !== ctx.user.id)
           throw new Error("Not your client.");
         // Deleted client
@@ -188,15 +189,23 @@ const resolvers = {
           throw new Error("Not your client.");
         // Check if stock available
         for await (const item of input.order) {
-          const { id } = item
-          const product = await Product.findById(id)
-          if(item.stock > product.stock) {
-            throw new Error(`Product ${ product.name } exceeds quantity available.`)
+          const { id } = item;
+          const product = await Product.findById(id);
+          if (item.stock > product.stock) {
+            throw new Error(
+              `Product ${product.name} exceeds quantity available.`
+            );
+          } else {
+            product.stock = product.stock - item.stock
+            await product.save()
           }
         }
+        // Create an order instance
+        const order = new Order(input);
         // Assign seller
-
+        order.vendor = ctx.user.id;
         // Save in database
+        return await order.save();
       } catch (error) {}
     },
   },
