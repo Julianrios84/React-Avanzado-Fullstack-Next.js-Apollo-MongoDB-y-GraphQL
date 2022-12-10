@@ -28,7 +28,6 @@ const typeDefs = gql`
   }
 
   # ========= Products =========
-
   type Product {
     id: ID
     name: String
@@ -44,7 +43,6 @@ const typeDefs = gql`
   }
 
   # ========= Clients =========
-
   type Client {
     id: ID
     name: String
@@ -97,6 +95,12 @@ const typeDefs = gql`
     COMPLETE
   }
 
+  # ========= search's Advanced =========
+  type BestCustomers {
+    client: [Client]
+    total: Float
+  }
+
   type Query {
     # ========= Users =========
     getUser(token: String!): User
@@ -112,6 +116,8 @@ const typeDefs = gql`
     getOrdersForSeller: [Order]
     getOrder(id: ID!): Order
     getOrdersForStatus(status: String!): [Order]
+    # ========= search's Advanced =========
+    bestCustomers: [BestCustomers]
   }
 
   type Mutation {
@@ -130,6 +136,7 @@ const typeDefs = gql`
     createOrder(input: OrderInput): Order
     updateOrder(id: ID!, input: OrderInput): Order
     deleteOrder(id: ID!): String
+    
   }
 `;
 

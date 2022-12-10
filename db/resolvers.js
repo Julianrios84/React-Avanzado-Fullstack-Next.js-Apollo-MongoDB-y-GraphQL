@@ -88,7 +88,38 @@ const resolvers = {
       try {
         return await Order.find({ vendor: ctx.user.id, status });
       } catch (error) {}
-    }
+    },
+    // ========= search's Advanced =========
+    bestCustomers: async () => {
+      try {
+        return await Order.aggregate([
+          {
+            $match: {
+              status: "COMPLETE",
+            },
+          },
+          {
+            $group: {
+              _id: "$client",
+              total: { $sum: "$total" },
+            },
+          },
+          {
+            $lookup: {
+              from: "clients",
+              localField: "_id",
+              foreignField: "_id",
+              as: "client",
+            },
+          },
+          {
+            $sort: {
+              total: -1
+            }
+          }
+        ]);
+      } catch (error) {}
+    },
   },
   Mutation: {
     // ========= Users =========
