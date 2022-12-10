@@ -1,15 +1,10 @@
-require('dotenv').config({ path: '.env' })
+require('dotenv').config({ path: 'development.env' })
 
-const { default: mongoose } = require("mongoose");
+const mongoose = require('mongoose');
 
 const database = async () => {
   try {
-    await mongoose.connect(process.env.DB_MONGO, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true
-    })
+    await mongoose.connect(process.env.DB_MONGO);
     console.log('Database connected!')
   } catch (error) {
     console.log('Error connected database!')

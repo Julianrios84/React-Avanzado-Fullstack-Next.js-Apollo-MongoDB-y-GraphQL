@@ -53,7 +53,7 @@ const typeDefs = gql`
     createAt: String
   }
 
-  input ProductInput {
+  input ClientInput {
     name: String!
     surnames: String!
     company: String!
@@ -77,14 +77,14 @@ const typeDefs = gql`
     stock: Int
   }
 
-  type OrderInput {
+  input OrderInput {
     order: [OrderProductInput]
     total: Float
     client: ID
     status: StatusOrder
   }
 
-  type OrderProductInput {
+  input OrderProductInput {
     id: ID!
     stock: Int!
   }
@@ -108,43 +108,41 @@ const typeDefs = gql`
 
   type Query {
     # ========= Users =========
-    getUser(token: String!): User
+    userGet(token: String!): User
     # ========= Products =========
-    getProducts: [Product]
-    getProduct(id: ID!): Product
+    productsGet: [Product]
+    productGet(id: ID!): Product
     # ========= Clients =========
-    getClients: [Client]
-    getClient(id: ID!): Client
-    getClientsForSeller: [Client]
+    clientsGet: [Client]
+    clientGet(id: ID!): Client
+    clientsForSellerGet: [Client]
     # ========= Orders =========
-    getOrders: [Order]
-    getOrdersForSeller: [Order]
-    getOrder(id: ID!): Order
-    r
-    getOrdersForStatus(status: String!): [Order]
+    ordersGet: [Order]
+    ordersForSellerGet: [Order]
+    orderGet(id: ID!): Order
+    ordersForStatusGet(status: String!): [Order]
     # ========= search's Advanced =========
     bestCustomers: [BestCustomers]
     bestSellers: [BestSellers]
-    searchProduct: (text: String!): [Product]
+    searchProduct(text: String!): [Product]
   }
 
   type Mutation {
     # ========= Users =========
-    createUser(input: UserInput): User
-    authUser(input: AuthInput): Token
+    userCreate(input: UserInput): User
+    userAuth(input: AuthInput): Token
     # ========= Products =========
-    createProduct(input: ProductInput): Product
-    updateProduct(id: ID!, input: ProductInput): Product
-    deleteProduct(id: ID!): String
+    productCreate(input: ProductInput): Product
+    productUpdate(id: ID!, input: ProductInput): Product
+    productDelete(id: ID!): String
     # ========= Clients =========
-    createClient(input: ClientInput): Client
-    updateClient(id: ID!, input: ClientInput): Client
-    deleteClient(id: ID!): String
+    clientCreate(input: ClientInput): Client
+    clientUpdate(id: ID!, input: ClientInput): Client
+    clientDelete(id: ID!): String
     # ========= Orders =========
-    createOrder(input: OrderInput): Order
-    updateOrder(id: ID!, input: OrderInput): Order
-    deleteOrder(id: ID!): String
-    
+    orderCreate(input: OrderInput): Order
+    orderUpdate(id: ID!, input: OrderInput): Order
+    orderDelete(id: ID!): String
   }
 `;
 

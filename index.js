@@ -1,4 +1,4 @@
-require("dotenv").config({ path: ".env" });
+require("dotenv").config({ path: "development.env" });
 
 const { ApolloServer, gql } = require("apollo-server");
 const jwt = require("jsonwebtoken");
@@ -7,7 +7,7 @@ const typeDefs = require("./db/schema");
 const resolvers = require("./db/resolvers");
 const database = require("./config/db");
 
-// Connected Databse
+// Connected Database
 database();
 
 // Server
@@ -16,11 +16,13 @@ const server = new ApolloServer({
   resolvers,
   context: ({ req }) => {
     const token = req.headers["authorization"] || "";
-    if (token) {
+    if (token != "") {
       try {
         const user = jwt.verify(token, process.env.TOKEN_SECRET);
         return { user };
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: index.js:24 ~ error", error);
+      }
     }
   },
 });

@@ -1,4 +1,4 @@
-require("dotenv").config({ path: ".env" });
+require("dotenv").config({ path: "development.env" });
 // Packages
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -18,33 +18,41 @@ const createToken = (user, secret, expiresIn) => {
 const resolvers = {
   Query: {
     // ========= Users =========
-    getUser: async (_, { token }) => {
+    userGet: async (_, { token }) => {
       try {
         // Verify token
         return await jwt.verify(token, process.env.TOKEN_SECRET);
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:26 ~ getUser: ~ error", error);
+      }
     },
     // ========= Products =========
-    getProducts: async () => {
+    productsGet: async () => {
       try {
         return await Product.find({});
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:34 ~ getProducts: ~ error", error);
+      }
     },
-    getProduct: async (_, { id }) => {
+    productGet: async (_, { id }) => {
       try {
         // Check product
         const product = await Product.findById(id);
         if (!product) throw new Error("Product not found!");
         return product;
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:44 ~ getProduct: ~ error", error);
+      }
     },
     // ========= Clients =========
-    getClients: async () => {
+    clientsGet: async () => {
       try {
         return await Client.find({});
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:52 ~ getClients: ~ error", error);
+      }
     },
-    getClient: async (_, { id }, ctx) => {
+    clientGet: async (_, { id }, ctx) => {
       try {
         // Check if the client exists
         const client = await Client.findById(id);
@@ -54,25 +62,39 @@ const resolvers = {
           throw new Error("Not your client.");
 
         return client;
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:66 ~ getClient: ~ error", error);
+      }
     },
-    getClientsForSeller: async (_, {}, ctx) => {
+    clientsForSellerGet: async (_, {}, ctx) => {
       try {
         return await Client.find({ vendor: ctx.user.id.toString() });
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:74 ~ getClientsForSeller: ~ error",
+          error
+        );
+      }
     },
     // ========= Orders =========
-    getOrders: async () => {
+    ordersGet: async () => {
       try {
         return await Order.find({});
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:84 ~ getOrders: ~ error", error);
+      }
     },
-    getOrdersForSeller: async (_, {}, ctx) => {
+    ordersForSellerGet: async (_, {}, ctx) => {
       try {
         return await Order.find({ vendor: ctx.user.id });
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:92 ~ getOrdersForSeller: ~ error",
+          error
+        );
+      }
     },
-    getOrder: async (_, { id }, ctx) => {
+    orderGet: async (_, { id }, ctx) => {
       try {
         // Check if the order exists
         const order = await Order.findById(id);
@@ -82,12 +104,19 @@ const resolvers = {
           throw new Error("Not your order.");
         // Return result
         return order;
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:108 ~ getOrder: ~ error", error);
+      }
     },
-    getOrdersForStatus: async (_, { status }, ctx) => {
+    ordersForStatusGet: async (_, { status }, ctx) => {
       try {
         return await Order.find({ vendor: ctx.user.id, status });
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:116 ~ getOrdersForStatus: ~ error",
+          error
+        );
+      }
     },
     // ========= search's Advanced =========
     bestCustomers: async () => {
@@ -121,7 +150,12 @@ const resolvers = {
             },
           },
         ]);
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:155 ~ bestCustomers: ~ error",
+          error
+        );
+      }
     },
     bestSellers: async () => {
       try {
@@ -154,17 +188,27 @@ const resolvers = {
             },
           },
         ]);
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:193 ~ bestSellers: ~ error",
+          error
+        );
+      }
     },
     searchProduct: async (_, { text }) => {
       try {
         return await Product.find({ $text: { $search: text } }).limit(10);
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:203 ~ searchProduct: ~ error",
+          error
+        );
+      }
     },
   },
   Mutation: {
     // ========= Users =========
-    createUser: async (_, { input }) => {
+    userCreate: async (_, { input }) => {
       try {
         // Destructuring
         const { email, password } = input;
@@ -172,25 +216,27 @@ const resolvers = {
         const exists = await User.findOne({ email });
         if (exists) throw new Error("The user is already registered.");
         // Hashed password
-        const salt = await bcrypt.getSalt(10);
+        const salt = await bcrypt.genSalt(10);
         input.password = await bcrypt.hash(password, salt);
         // Save in database
         const user = new User(input);
         user.save();
         return user;
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:226 ~ createUser: ~ error", error);
+      }
     },
-    authUser: async (_, { input }) => {
+    userAuth: async (_, { input }) => {
       try {
         // Destructuring
         const { email, password } = input;
         // Check if the user exists
         const user = await User.findOne({ email });
-        if (user) throw new Error("Username does not exist.");
+        if (!user) throw new Error("Username does not exist.");
         // Check password is correct
         const passwordIsCorrect = await bcrypt.compare(
           password,
-          exists.password
+          user.password
         );
         if (!passwordIsCorrect) throw new Error("The password is not correct.");
         // Create token
@@ -201,17 +247,24 @@ const resolvers = {
             process.env.TOKEN_EXPIRES
           ),
         };
-      } catch (error) {}
+      } catch (error) {
+        console.log("🚀 ~ file: resolvers.js:251 ~ authUser: ~ error", error);
+      }
     },
     // ========= Products =========
-    createProduct: async (_, { input }) => {
+    productCreate: async (_, { input }) => {
       try {
         // Save in database
         const product = new Product(input);
         return await product.save();
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:262 ~ createProduct: ~ error",
+          error
+        );
+      }
     },
-    updateProduct: async (_, { id, input }) => {
+    productUpdate: async (_, { id, input }) => {
       try {
         // Check if the product exists
         let product = await Product.findById(id);
@@ -220,9 +273,14 @@ const resolvers = {
         return await Product.findOneAndUpdate({ _id: id }, input, {
           new: true,
         });
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:278 ~ updateProduct: ~ error",
+          error
+        );
+      }
     },
-    deleteProduct: async (_, { id }) => {
+    productDelete: async (_, { id }) => {
       try {
         // Check if the product exists
         let product = await Product.findById(id);
@@ -230,25 +288,36 @@ const resolvers = {
         // Deleted product
         await Product.findOneAndDelete({ _id: id });
         return "Product delete!";
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:293 ~ deleteProduct: ~ error",
+          error
+        );
+      }
     },
     // ========= Clients =========
-    createClient: async (_, { input }, ctx) => {
+    clientCreate: async (_, { input }, ctx) => {
+      console.log("🚀 ~ file: resolvers.js:300 ~ createClient: ~ ctx", ctx)
       try {
         // Destructuring
         const { email } = input;
         // Check if the client exists
         let exits = await Client.findOne({ email });
-        if (!exits) throw new Error("The client is already registered.");
+        if (exits) throw new Error("The client is already registered.");
         // Create instance client
         const client = new Client(input);
         // Assign seller
         client.vendor = ctx.user.id;
         // Save in database
         return await client.save();
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:314 ~ createClient: ~ error",
+          error
+        );
+      }
     },
-    updateClient: async (_, { id, input }, ctx) => {
+    clientUpdate: async (_, { id, input }, ctx) => {
       try {
         // Check if the client exists
         let client = await Client.findById(id);
@@ -260,9 +329,14 @@ const resolvers = {
         return await Client.findOneAndUpdate({ _id: id }, input, {
           new: true,
         });
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:333 ~ updateClient: ~ error",
+          error
+        );
+      }
     },
-    deleteClient: async (_, { id }, ctx) => {
+    clientDelete: async (_, { id }, ctx) => {
       try {
         // Check if the client exists
         let client = await Client.findById(id);
@@ -273,15 +347,18 @@ const resolvers = {
         // Deleted client
         await Client.findOneAndDelete({ _id: id });
         return "Client delete!";
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:351 ~ deleteClient: ~ error",
+          error
+        );
+      }
     },
     // ========= Orders =========
-    createOrder: async (_, { input }, ctx) => {
+    orderCreate: async (_, { input }, ctx) => {
       try {
-        // Destructuring
-        const { client: id } = input;
         // Check if the client exists
-        let client = await Client.findById(id);
+        let client = await Client.findById(input.client);
         if (!client) throw new Error("Client not found!");
         // Check if the client is mine
         if (client.vendor.toString() !== ctx.user.id)
@@ -305,15 +382,22 @@ const resolvers = {
         order.vendor = ctx.user.id;
         // Save in database
         return await order.save();
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:386 ~ createOrder: ~ error",
+          error
+        );
+      }
     },
-    updateOrder: async (_, { id, input }, ctx) => {
+    orderUpdate: async (_, { id, input }, ctx) => {
       try {
+        // Destructuring
+        const { client: clientId } = input;
         // Check if the order exists
         const order = await Order.findById(id);
         if (!order) throw new Error(`Order not found.`);
         // Check if the client exists
-        const client = await Client.findById(id);
+        const client = await Client.findById(clientId);
         if (!client) throw new Error(`Client not found.`);
         // Check if the client and order is mine
         if (order.vendor.toString() !== ctx.user.id)
@@ -330,16 +414,21 @@ const resolvers = {
                 `Product ${product.name} exceeds quantity available.`
               );
             } else {
-              product.stock = product.stock + item.stock;
+              product.stock = product.stock - item.stock;
               await product.save();
             }
           }
         }
         // Save in database
         return await Order.findOneAndUpdate({ _id: id }, input, { new: true });
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:425 ~ updateOrder: ~ error",
+          error
+        );
+      }
     },
-    deleteOrder: async (_, { id }, ctx) => {
+    orderDelete: async (_, { id }, ctx) => {
       try {
         // Check if the client exists
         let order = await Order.findById(id);
@@ -350,7 +439,12 @@ const resolvers = {
         // Deleted client
         await Order.findOneAndDelete({ _id: id });
         return "Order delete!";
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: resolvers.js:443 ~ deleteOrder: ~ error",
+          error
+        );
+      }
     },
   },
 };
