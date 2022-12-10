@@ -62,6 +62,11 @@ const resolvers = {
       } catch (error) {}
     },
     // ========= Orders =========
+    getOrders: async () => {
+      try {
+        return await Order.find({});
+      } catch (error) {}
+    },
   },
   Mutation: {
     // ========= Users =========
@@ -196,8 +201,8 @@ const resolvers = {
               `Product ${product.name} exceeds quantity available.`
             );
           } else {
-            product.stock = product.stock - item.stock
-            await product.save()
+            product.stock = product.stock - item.stock;
+            await product.save();
           }
         }
         // Create an order instance
