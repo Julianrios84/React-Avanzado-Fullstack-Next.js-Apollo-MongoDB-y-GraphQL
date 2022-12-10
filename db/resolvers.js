@@ -185,7 +185,7 @@ const resolvers = {
         });
       } catch (error) {}
     },
-    deleteClient: async (_, { id }) => {
+    deleteClient: async (_, { id }, ctx) => {
       try {
         // Check if the client exists
         let client = await Client.findById(id);
@@ -230,6 +230,39 @@ const resolvers = {
         return await order.save();
       } catch (error) {}
     },
+    updateOrder: async (_, { id, input }, ctx) => {
+      try {
+        // Check if the order exists
+        const order = await Order.findById(id);
+        if (!order) throw new Error(`Order not found.`);
+        // Check if the client exists
+        const client = await Client.findById(id);
+        if (!client) throw new Error(`Client not found.`);
+        // Check if the client and order is mine
+        if (order.vendor.toString() !== ctx.user.id)
+          throw new Error("Not your order.");
+        if (client.vendor.toString() !== ctx.user.id)
+          throw new Error("Not your client.");
+        // Check if stock available
+        if (input.order) {
+          for await (const item of input.order) {
+            const { id } = item;
+            const product = await Product.findById(id);
+            if (item.stock > product.stock) {
+              throw new Error(
+                `Product ${product.name} exceeds quantity available.`
+              );
+            } else {
+              product.stock = product.stock + item.stock;
+              await product.save();
+            }
+          }
+        }
+        // Save in database
+        return await Order.findOneAndUpdate({ _id: id }, input, { new: true });
+      } catch (error) {}
+    },
+   
   },
 };
 
