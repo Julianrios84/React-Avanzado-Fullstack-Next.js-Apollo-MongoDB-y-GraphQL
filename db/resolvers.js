@@ -262,7 +262,19 @@ const resolvers = {
         return await Order.findOneAndUpdate({ _id: id }, input, { new: true });
       } catch (error) {}
     },
-   
+    deleteOrder: async (_, { id }, ctx) => {
+      try {
+        // Check if the client exists
+        let order = await Order.findById(id);
+        if (!order) throw new Error("Order not found!");
+        // Check if the client is mine
+        if (order.vendor.toString() !== ctx.user.id)
+          throw new Error("Not your order.");
+        // Deleted client
+        await Order.findOneAndDelete({ _id: id });
+        return "Order delete!";
+      } catch (error) {}
+    },
   },
 };
 
