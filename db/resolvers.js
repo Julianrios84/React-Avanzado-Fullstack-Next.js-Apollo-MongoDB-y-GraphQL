@@ -84,6 +84,11 @@ const resolvers = {
         return order;
       } catch (error) {}
     },
+    getOrdersForStatus: async (_, { status }, ctx) => {
+      try {
+        return await Order.find({ vendor: ctx.user.id, status });
+      } catch (error) {}
+    }
   },
   Mutation: {
     // ========= Users =========
