@@ -113,6 +113,42 @@ const resolvers = {
             },
           },
           {
+            $limit: 10,
+          },
+          {
+            $sort: {
+              total: -1
+            }
+          }
+        ]);
+      } catch (error) {}
+    },
+    bestSellers: async () => {
+      try {
+        return await Order.aggregate([
+          {
+            $match: {
+              status: "COMPLETE",
+            },
+          },
+          {
+            $group: {
+              _id: "$vendor",
+              total: { $sum: "$total" },
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "_id",
+              foreignField: "_id",
+              as: "vendor",
+            },
+          },
+          {
+            $limit: 3,
+          },
+          {
             $sort: {
               total: -1
             }
