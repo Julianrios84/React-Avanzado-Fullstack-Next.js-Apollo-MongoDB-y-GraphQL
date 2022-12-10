@@ -106,9 +106,10 @@ const typeDefs = gql`
     # ========= Clients =========
     getClients: [Client]
     getClient(id: ID!): Client
-    getClientsForVendor: [Client]
+    getClientsForSeller: [Client]
     # ========= Orders =========
     getOrders: [Order]
+    getOrdersForSeller: [Order]
     
   }
 

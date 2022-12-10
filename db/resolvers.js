@@ -56,7 +56,7 @@ const resolvers = {
         return client;
       } catch (error) {}
     },
-    getClientsForVendor: async (_, {}, ctx) => {
+    getClientsForSeller: async (_, {}, ctx) => {
       try {
         return await Client.find({ vendor: ctx.user.id.toString() });
       } catch (error) {}
@@ -65,6 +65,11 @@ const resolvers = {
     getOrders: async () => {
       try {
         return await Order.find({});
+      } catch (error) {}
+    },
+    getOrdersForSeller: async (_, {}, ctx) => {
+      try {
+        return await Order.find({ vendor: ctx.user.id });
       } catch (error) {}
     },
   },
