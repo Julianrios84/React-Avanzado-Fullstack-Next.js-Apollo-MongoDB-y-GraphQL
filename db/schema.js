@@ -120,10 +120,12 @@ const typeDefs = gql`
     getOrders: [Order]
     getOrdersForSeller: [Order]
     getOrder(id: ID!): Order
+    r
     getOrdersForStatus(status: String!): [Order]
     # ========= search's Advanced =========
     bestCustomers: [BestCustomers]
     bestSellers: [BestSellers]
+    searchProduct: (text: String!): [Product]
   }
 
   type Mutation {

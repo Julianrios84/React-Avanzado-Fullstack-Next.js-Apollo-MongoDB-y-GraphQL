@@ -117,9 +117,9 @@ const resolvers = {
           },
           {
             $sort: {
-              total: -1
-            }
-          }
+              total: -1,
+            },
+          },
         ]);
       } catch (error) {}
     },
@@ -150,10 +150,15 @@ const resolvers = {
           },
           {
             $sort: {
-              total: -1
-            }
-          }
+              total: -1,
+            },
+          },
         ]);
+      } catch (error) {}
+    },
+    searchProduct: async (_, { text }) => {
+      try {
+        return await Product.find({ $text: { $search: text } }).limit(10);
       } catch (error) {}
     },
   },
