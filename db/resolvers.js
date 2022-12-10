@@ -72,6 +72,18 @@ const resolvers = {
         return await Order.find({ vendor: ctx.user.id });
       } catch (error) {}
     },
+    getOrder: async (_, { id }, ctx) => {
+      try {
+        // Check if the order exists
+        const order = await Order.findById(id);
+        if (!order) throw new Error("Order not found.");
+        // Check if the order is mine
+        if (order.vendor.toString() !== ctx.user.id)
+          throw new Error("Not your order.");
+        // Return result
+        return order;
+      } catch (error) {}
+    },
   },
   Mutation: {
     // ========= Users =========
