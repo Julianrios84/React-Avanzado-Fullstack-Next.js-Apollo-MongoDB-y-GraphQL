@@ -8,7 +8,6 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-
     // Read stored storage
     const token = localStorage.getItem('token');
     return {

@@ -22,6 +22,7 @@ const server = new ApolloServer({
         return { user };
       } catch (error) {
         console.log("🚀 ~ file: index.js:24 ~ error", error);
+        return error.message 
       }
     }
   },
