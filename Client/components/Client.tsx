@@ -57,14 +57,12 @@ export default function Client({ client }: any) {
       if (result.value) {
 
         try {
-          // Eliminar por ID
           const { data } = await clientDelete({
             variables: {
               id
             }
           });
 
-          // Mostrar una alerta
           Swal.fire(
             'Removed!',
             data.clientDelete,
