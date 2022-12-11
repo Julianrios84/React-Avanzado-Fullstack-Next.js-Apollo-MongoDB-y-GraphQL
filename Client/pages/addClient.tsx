@@ -33,13 +33,13 @@ export default function AddClient() {
 
   const router = useRouter();
   const [message, saveMessage] = useState('');
-  const [addClient] = useMutation(CLIENT_CREATE, {
-    update(cache, { data: { addClient } }) {
+  const [clientCreate] = useMutation(CLIENT_CREATE, {
+    update(cache, { data: { clientCreate } }) {
       const { clientsForSellerGet }: any = cache.readQuery({ query: CLIENTS_FOR_SELLER_GET });
       cache.writeQuery({
         query: CLIENTS_FOR_SELLER_GET,
         data: {
-          clientsForSellerGet: [...clientsForSellerGet, addClient]
+          clientsForSellerGet: [...clientsForSellerGet, clientCreate]
         }
       })
     }
@@ -69,20 +69,26 @@ export default function AddClient() {
       const { name, surnames, company, email, mobile } = values
 
       try {
-        await addClient({
+        const { data } = await clientCreate({
           variables: {
             input: {
-              name, surnames, company, email, mobile
+              name, 
+              surnames, 
+              company, 
+              email, 
+              mobile
             }
           }
         });
+        console.log("🚀 ~ file: addClient.tsx:83 ~ AddClient ~ data", data)
         router.push('/');
       } catch (error: any) {
+        console.log("🚀 ~ file: addClient.tsx:85 ~ AddClient ~ error", error)
         saveMessage(error.message.replace('GraphQL error: ', ''));
 
         setTimeout(() => {
           saveMessage('');
-        }, 4000);
+        }, 2000);
       }
     }
   })
