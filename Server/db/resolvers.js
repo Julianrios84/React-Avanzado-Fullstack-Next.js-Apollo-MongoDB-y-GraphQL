@@ -18,10 +18,10 @@ const createToken = (user, secret, expiresIn) => {
 const resolvers = {
   Query: {
     // ========= Users =========
-    userGet: async (_, { token }) => {
+    userGet: async (_, { }, ctx) => {
       try {
         // Verify token
-        return await jwt.verify(token, process.env.TOKEN_SECRET);
+        return ctx.user
       } catch (error) {
         console.log("🚀 ~ file: resolvers.js:26 ~ getUser: ~ error", error);
       }
@@ -297,7 +297,6 @@ const resolvers = {
     },
     // ========= Clients =========
     clientCreate: async (_, { input }, ctx) => {
-      console.log("🚀 ~ file: resolvers.js:300 ~ createClient: ~ ctx", ctx)
       try {
         // Destructuring
         const { email } = input;
