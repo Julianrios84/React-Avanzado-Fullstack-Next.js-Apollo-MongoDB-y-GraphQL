@@ -86,7 +86,7 @@ const resolvers = {
     },
     ordersForSellerGet: async (_, {}, ctx) => {
       try {
-        return await Order.find({ vendor: ctx.user.id });
+        return await Order.find({ vendor: ctx.user.id }).populate('client');
       } catch (error) {
         console.log(
           "🚀 ~ file: resolvers.js:92 ~ getOrdersForSeller: ~ error",
@@ -366,12 +366,12 @@ const resolvers = {
         for await (const item of input.order) {
           const { id } = item;
           const product = await Product.findById(id);
-          if (item.stock > product.stock) {
+          if (item.quantity > product.stock) {
             throw new Error(
               `Product ${product.name} exceeds quantity available.`
             );
           } else {
-            product.stock = product.stock - item.stock;
+            product.stock = product.stock - item.quantity;
             await product.save();
           }
         }
@@ -408,12 +408,14 @@ const resolvers = {
           for await (const item of input.order) {
             const { id } = item;
             const product = await Product.findById(id);
-            if (item.stock > product.stock) {
+            if (item.quantity > product.stock) {
               throw new Error(
                 `Product ${product.name} exceeds quantity available.`
               );
             } else {
-              product.stock = product.stock - item.stock;
+              const previousQuantity = order.order.find(item => item.id === id).quantity;
+              product.stock = product.stock + previousQuantity - item.quantity;
+              // product.stock = product.stock - item.quantity;
               await product.save();
             }
           }
@@ -435,6 +437,13 @@ const resolvers = {
         // Check if the client is mine
         if (order.vendor.toString() !== ctx.user.id)
           throw new Error("Not your order.");
+
+        for await (let item of order.order) {
+          const product = await Product.findById(item.id);
+          product.stock = product.stock + item.quantity;
+          await product.save();
+        }
+
         // Deleted client
         await Order.findOneAndDelete({ _id: id });
         return "Order delete!";

@@ -66,7 +66,7 @@ const typeDefs = gql`
     id: ID
     order: [OrderGroup]
     total: Float
-    client: ID
+    client: Client
     vendor: ID
     status: StatusOrder
     createAt: String
@@ -74,7 +74,9 @@ const typeDefs = gql`
 
   type OrderGroup {
     id: ID
-    stock: Int
+    quantity: Int
+    name: String
+    price: Float
   }
 
   input OrderInput {
@@ -85,8 +87,10 @@ const typeDefs = gql`
   }
 
   input OrderProductInput {
-    id: ID!
-    stock: Int!
+    id: ID
+    quantity: Int
+    name: String
+    price: Float
   }
 
   enum StatusOrder {

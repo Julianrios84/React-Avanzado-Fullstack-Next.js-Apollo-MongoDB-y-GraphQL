@@ -21,12 +21,13 @@ export default ( state, action ) => {
       case PRODUCTS_STOCK:
           return {
               ...state,
-              products: state.products.map( product => product.id === action.payload.id ? action.payload : product )
+              products: state.products.map( product => product.id === action.payload.id ? product = action.payload : product )
           }
       case TOTAL_UPDATED:
+          console.log(state)
           return {
               ...state,
-              total: state.products.reduce( (total_new, product) => total_new += product.price * product.stock, 0 )
+              total: state.products.reduce( (total_new, item) => total_new += item.price * item.quantity, 0)
           }
 
       default: 

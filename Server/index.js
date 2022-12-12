@@ -16,13 +16,14 @@ const server = new ApolloServer({
   resolvers,
   context: ({ req }) => {
     const token = req.headers["authorization"] || "";
+    console.log("🚀 ~ file: index.js:19 ~ token", token)
     if (token != "") {
       try {
         const user = jwt.verify(token.replace('Bearer ', ''), process.env.TOKEN_SECRET);
         return { user };
       } catch (error) {
         console.log("🚀 ~ file: index.js:24 ~ error", error);
-        return error.message 
+        // return error.message 
       }
     }
   },
