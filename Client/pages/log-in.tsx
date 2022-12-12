@@ -48,12 +48,12 @@ export default function LogIn() {
         setTimeout(() => {
           const { token } = data.userAuth;
           localStorage.setItem('token', token);
-        }, 1500);
+        }, 1000);
 
         setTimeout(() => {
           saveMessage('');
           router.push('/');
-        }, 1500);
+        }, 2000);
 
       } catch (error: any) {
         saveMessage(error.message.replace('GraphQL error: ', ''));
